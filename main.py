@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 from model import Net
 
@@ -13,9 +14,11 @@ inputs = np.array([[3.3], [4.4], [5.5], [6.71], [6.93], [4.168],
 targets = np.array([[1.7], [2.76], [2.09], [3.19], [1.694], [1.573], 
                     [3.366], [2.596], [2.53], [1.221], [2.827], 
                     [3.465], [1.65], [2.904], [1.3]], dtype=np.float32)
-# Uncomment to normalize labels or inputs
-num_epochs = 10
+
+num_epochs = 1000
 model = Net(input_dim, latent_dim, output_dim)
 
 for epoch in range(num_epochs):
-    preds = 
+    preds = model.train(inputs, targets)
+    if(epoch % 100 == 0):
+        print("\tMSELoss is: ", np.sum((preds - targets)**2) )
