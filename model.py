@@ -50,13 +50,12 @@ class Net:
                 clip_min = np.ones(self.weights[l].shape)*(-5)
                 w_new = self.weights[l]
                 while breaking_bad:
-                    
-                    if((W_new - a_t * g_hat < clip_max).all()  or (W_new - a_t * g_hat > clip_min).all()):
+                    if(w_new - a_t * g_hat < clip_max).all()  or (w_new - a_t * g_hat > clip_min).all():
                         self.weights[l] = self.weights[l] - a_t * g_hat
                         breaking_bad = False
                     else:
                         a_t = a_t / 2
-                    W_new = self.weights[l] - a_t * g_hat
+                    w_new = self.weights[l] - a_t * g_hat
                 # print("Logging Gradient descent update", np.max(a_t * g_hat))                                    
                 self.biases[l] = self.biases[l] - a_t * g_hat2
         # print("Logging weights:", self.weights)
