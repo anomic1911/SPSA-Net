@@ -2,7 +2,7 @@ import numpy as np
 np.random.seed(786)
 
 class Net:
-    def __init__(self, input_dim, latent_dim, output_dim,  a=0.01, b=0.01, alpha=0.7, gamma=0.1):
+    def __init__(self, input_dim, latent_dim, output_dim,  a=0.01, b=0.01, alpha=0.602, gamma=0.101):
         self.input_dim = input_dim
         self.latent_dim = latent_dim
         self.output_dim = output_dim
@@ -24,14 +24,14 @@ class Net:
         out = np.dot(W[1].T, out) + b[1]
         return out
 
-    def train(self, inputs, targets, t_max= 25): 
+    def train(self, inputs, targets, t_max= 100): 
         for l in range(len(self.weights)):
             W_p = np.copy(self.weights)
             W_m = np.copy(self.weights)
             b_p = np.copy(self.biases)
             b_m = np.copy(self.biases)
             for t in range(1,t_max):
-                a_t = self.a / (1+t)**self.alpha
+                a_t = self.a / (1+t+500)**self.alpha
                 b_t = self.b / (1+t)**self.gamma
                 delta = np.random.binomial(1, p=0.5, size=(self.weights[l].shape)) * 2. - 1
                 delta2 = np.random.binomial(1, p=0.5, size=(self.biases[l].shape)) * 2. - 1
@@ -55,12 +55,13 @@ class Net:
                 clip_min = np.ones(self.weights[l].shape)*(-5)
                 W_new = self.weights[l]
                 while breaking_bad:
-                    W_new = self.weights[l] - a_t * g_hat
-                    if((self.weights[l] - a_t * g_hat < clip_max).all()  or (self.weights[l] - a_t * g_hat > clip_min).all()):
+                    
+                    if((W_new - a_t * g_hat < clip_max).all()  or (W_new - a_t * g_hat > clip_min).all()):
                         self.weights[l] = self.weights[l] - a_t * g_hat
                         breaking_bad = False
                     else:
                         a_t = a_t / 2
+                    W_new = self.weights[l] - a_t * g_hat
                 # print("Logging Gradient descent update", np.max(a_t * g_hat))                                    
                 self.biases[l] = self.biases[l] - a_t * g_hat2
         # print("Logging weights:", self.weights)
